@@ -3,10 +3,11 @@
 This library realizes Shamir's Secret Sharing Scheme for mnemonics in a sense of BIP-39 (https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki).
 
 It based on the next libraries:
-NuGet packet NBitcoin (https://github.com/MetacoSA/NBitcoin). It contains class Mnemonic.
-TuviBytesShamirSecretSharingLib (https://github.com/Eppie-io/TuviBytesShamirSecretSharingLib). It realizes Shamir's Secret Sharing Scheme for bytes sand byte's array.
+* NuGet packet NBitcoin (https://github.com/MetacoSA/NBitcoin). It contains class Mnemonic.
+* TuviBytesShamirSecretSharingLib (https://github.com/Eppie-io/TuviBytesShamirSecretSharingLib). It realizes Shamir's Secret Sharing Scheme for bytes sand byte's array.
 
 It allows you to "divide" your main secret mnemonic M into N partial mnemonics. Any T (0 < T <= N <= 16) of them will recover your main secret mnemonic. You can choose T and N.
+
 Your secret can be only a mnemonic (from NBitcoin library).
 
 Peculiar properties:
@@ -17,9 +18,7 @@ Peculiar properties:
 How to use:
 ```
 Mnemonic mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve); // mnemonic creation
-
 Mnemonic[] mnemonics = MnemonicSharing.SplitMnemonic(mnemonic, threshold, numberOfShares); // splitting into partial mnemonics
-
 Mnemonic recoveredMnemonic = MnemonicSharing.RecoverMnemonic(mnemonics); // recovering from partial mnemonics
 ```
 More specific example

@@ -1,5 +1,7 @@
 ﻿/.vs 
-/MnemonicSharing/bin
-/MnemonicSharing/obj
+/MnemonicSharingLib/bin
+/MnemonicSharingLib/obj
+/MnemonicSharingLibTests/bin
+/MnemonicSharingLibTests/obj
 /TestingConsoleApp/bin
 /TestingConsoleApp/obj

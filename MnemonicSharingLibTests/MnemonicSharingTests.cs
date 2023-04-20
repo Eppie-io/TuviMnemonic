@@ -95,7 +95,7 @@ namespace MnemonicSharingLibTests
         [TestCase(WordCount.Eighteen)]
         [TestCase(WordCount.TwentyOne)]
         [TestCase(WordCount.TwentyFour)]
-        public void MnemonicRecovery_NotEnoughShares_Failure(WordCount wordCount)
+        public void RandomMnemonicRecovery_NotEnoughShares_Failure(WordCount wordCount)
         {
             Mnemonic mnemonic = new Mnemonic(Wordlist.English, wordCount);
 

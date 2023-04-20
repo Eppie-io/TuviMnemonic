@@ -13,7 +13,8 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 ///////////////////////////////////////////////////////////////////////////////
-
+///
+#pragma warning disable CA1707 // Identifiers should not contain underscores
 using MnemonicSharingLib;
 using NBitcoin;
 
@@ -26,6 +27,7 @@ namespace MnemonicSharingLibTests
         [TestCase(WordCount.Eighteen)]
         [TestCase(WordCount.TwentyOne)]
         [TestCase(WordCount.TwentyFour)]
+
         public void RandomMnemonicRecovery_AllPossibilitiesTests(WordCount wordCount)
         {
             Mnemonic mnemonic = new Mnemonic(Wordlist.English, wordCount);
@@ -95,7 +97,7 @@ namespace MnemonicSharingLibTests
         [TestCase(WordCount.Eighteen)]
         [TestCase(WordCount.TwentyOne)]
         [TestCase(WordCount.TwentyFour)]
-        public void RandomMnemonicRecovery_NotEnoughShares_Failure(WordCount wordCount)
+        public void MnemonicRecovery_NotEnoughShares_Failure(WordCount wordCount)
         {
             Mnemonic mnemonic = new Mnemonic(Wordlist.English, wordCount);
 

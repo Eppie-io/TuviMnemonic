@@ -37,6 +37,11 @@ namespace MnemonicSharingLib
         /// <returns>Entropy as byte array.</returns>
         public static byte[] GetEntropy(this Mnemonic mnemonic)
         {
+            if (mnemonic is null)
+            {
+                throw new ArgumentNullException(nameof(mnemonic));
+            }
+
             int[] indices = mnemonic.Indices;
             BigInteger number = new BigInteger(0);
             foreach (var index in indices)

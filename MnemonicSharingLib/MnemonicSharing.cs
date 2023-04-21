@@ -26,9 +26,9 @@ namespace MnemonicSharingLib
     /// Realizes Shamir's Secret Sharing Scheme for mnemonics in a sense of BIP-39 
     /// (https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki).
     /// Mnemonic is a byte array. It contains entropy (first 128, 160, 192, 224, 256 bits) and checksum (last 4, 5, 6, 7, 8 bits respectively).
-    /// Each 11 bits are changed to a word of special WorldList.
+    /// Each 11 bits are changed to a word from special WorldList.
     /// Shamir Sharing correctly works ONLY with CORRECT CHECKSUM mnemonics. 
-    /// Or last word can be changed to the word with valid checksum.
+    /// Or last word can be changed to the word that contains valid checksum.
     /// </summary>
     public static class MnemonicSharing
     {

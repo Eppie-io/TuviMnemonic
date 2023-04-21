@@ -60,7 +60,7 @@ namespace MnemonicSharingLib
         /// <param name="mnemonic">Mnemonic.</param>
         /// <param name="threshold">Threshold of scheme.</param>
         /// <param name="numberOfShares">Amount of shares.</param>
-        /// <returns></returns>
+        /// <returns>Partial mnemonics.</returns>
         public static Mnemonic[] SplitMnemonic(Mnemonic mnemonic, byte threshold, byte numberOfShares)
         {
             if (mnemonic is null)
@@ -119,8 +119,8 @@ namespace MnemonicSharingLib
         /// <summary>
         /// Calculates length of check sum of this mnemonic.
         /// </summary>
-        /// <param name="mnemonic"></param>
-        /// <returns></returns>
+        /// <param name="mnemonic">Mnemonic.</param>
+        /// <returns>Checksum's length.</returns>
         private static int ControlSumLength(Mnemonic mnemonic)
         {
             return mnemonic.Indices.Length / 3;

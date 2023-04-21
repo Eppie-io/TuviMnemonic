@@ -20,7 +20,7 @@ using MnemonicSharingLib;
 
 namespace TestingConsoleApp
 {
-    public class Program
+    public static class Program
     {
         static void Main(string[] args)
         {
@@ -45,7 +45,7 @@ namespace TestingConsoleApp
         {
             ////Experiment 3. How many mnemonics has repeated words (two or more the same words in a seed phrase).
 
-            Console.WriteLine("Start");
+            //Console.WriteLine("Start");
 
             int AmountOfPhrases = 0;
             for (int i = 0; i < amount; i++)
@@ -81,7 +81,7 @@ namespace TestingConsoleApp
         {
             //Experiment 5.How many repeats we have to do to get 3-5 valid partial mnemonics (after generation 16 ones).
 
-            Console.WriteLine("Start");
+            //Console.WriteLine("Start");
 
             List<int> listFor3 = new ();
             List<int> listFor4 = new ();
@@ -167,7 +167,7 @@ namespace TestingConsoleApp
         /// <param name="amount">Amount of mnemonics.</param>
         private static void CalculateStatisticsOfValidShares(int amount)
         {
-            Console.WriteLine("Start");
+            //Console.WriteLine("Start");
 
             int[] result = new int[17];
 
@@ -187,7 +187,7 @@ namespace TestingConsoleApp
                 result[counter]++;
             }
 
-            Console.WriteLine("Result:");
+            //Console.WriteLine("Result:");
             for (int i = 0; i < 17; i++)
             {
                 Console.WriteLine($"With {i} valid shares: {result[i]} initial mnemonics.");
@@ -198,19 +198,19 @@ namespace TestingConsoleApp
         /// <summary>
         /// Split mnemonic into shares and show them. Reccover initial mnemonic from shares.
         /// </summary>
-        /// <param name="threshold"></param>
-        /// <param name="numberOfShares"></param>
+        /// <param name="threshold">Threshold of sharing.</param>
+        /// <param name="numberOfShares">Number of shares.</param>
         private static void SplitMnemonicAndShowShares(byte threshold, byte numberOfShares)
         {
-            Console.WriteLine("Start");
+            //Console.WriteLine("Start");
             Mnemonic mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
             //Mnemonic mnemonic = new Mnemonic("three three three three three three three three three three three tiger");
             int counter = 0;
-            Console.WriteLine("Initial mnemonic:");
+            //Console.WriteLine("Initial mnemonic:");
             PrintWords(mnemonic);
 
             Mnemonic[] mnemonics = MnemonicSharing.SplitMnemonic(mnemonic, threshold, numberOfShares);
-            Console.WriteLine("Partial mnemonics:");
+            //Console.WriteLine("Partial mnemonics:");
             foreach (var mn in mnemonics)
             {
                 PrintWords(mn);
@@ -219,8 +219,8 @@ namespace TestingConsoleApp
                     counter++;
             }
 
-            Console.WriteLine("---------------------------");
-            Console.WriteLine("Recovered mnemonic from shares:");
+            //Console.WriteLine("---------------------------");
+            //Console.WriteLine("Recovered mnemonic from shares:");
             Mnemonic recoveredMnemonic = MnemonicSharing.RecoverMnemonic(mnemonics);
             PrintWords(recoveredMnemonic);
         }
@@ -234,7 +234,7 @@ namespace TestingConsoleApp
         {
             Mnemonic mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
             int counter = 0;
-            Console.WriteLine("Initial mnemonic:");
+            //Console.WriteLine("Initial mnemonic:");
             PrintWords(mnemonic);
 
             Mnemonic[] mnemonics = MnemonicSharing.SplitMnemonic(mnemonic, threshold, numberOfShares);
@@ -254,7 +254,7 @@ namespace TestingConsoleApp
         /// <param name="amount">Amount of mnemonics.</param>
         private static void SavingMnemonicsInFile(int amount)
         {
-            Console.WriteLine("Start");
+            //Console.WriteLine("Start");
             int counter = 0;
 
             string dirPath = $"data\\";
@@ -280,7 +280,7 @@ namespace TestingConsoleApp
                     {
                         if (IsFileContainsMnemonic(stream, mnemonic))
                         {
-                            Console.WriteLine("Current mnemonic already exists!!!");
+                            //Console.WriteLine("Current mnemonic already exists!!!");
                             PrintWords(mnemonic);
                         }
                         else
@@ -310,12 +310,12 @@ namespace TestingConsoleApp
         /// Creates partial mnemonics from random ones. Check are they valid. Input valid ones into dictionary.
         /// Check are partial mnemonics already exist or no. Shows in the end how many of them are already exist.
         /// </summary>
-        /// <param name="amount"></param>
+        /// <param name="amount">Amount of mnemonics to check.</param>
         private static void DictionaryMnemonicSearch(int amount)
         {
             uint amountOfValidMnemonics = 0;
             int counter = 0;
-            Console.WriteLine("Start");
+            //Console.WriteLine("Start");
             Dictionary<string, int> storage = new Dictionary<string, int>();
             for (int i = 0; i < amount; i++)
             {
@@ -335,7 +335,7 @@ namespace TestingConsoleApp
                         if (storage.ContainsKey(line))
                         {
                             storage[line]++;
-                            Console.WriteLine("This mnemonic is repeated!!!");
+                            //Console.WriteLine("This mnemonic is repeated!!!");
                             counter++;
                         }
                         else
@@ -381,8 +381,13 @@ namespace TestingConsoleApp
             return false;
         }
 
-        public static byte[] GetEntropy(Mnemonic mnemonic) //get entropy?
+        private static byte[] GetEntropy(Mnemonic mnemonic) //get entropy?
         {
+            if (mnemonic is null)
+            {
+                throw new ArgumentNullException(nameof(mnemonic));
+            }
+
             int[] indices = mnemonic.Indices;
             BigInteger number = new BigInteger(0);
             foreach (var index in indices)

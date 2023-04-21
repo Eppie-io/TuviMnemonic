@@ -41,6 +41,12 @@ namespace MnemonicSharingLib
 
             string[] words = mnemonic.Words;
             string[] words2 = anotherMnemonic.Words;
+
+            if (words.Length != words2.Length)
+            {
+                return false;
+            }
+
             for (int i = 0; i < words.Length; i++)
             {
                 if (words[i] != words2[i])

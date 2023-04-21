@@ -13,8 +13,7 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 ///////////////////////////////////////////////////////////////////////////////
-///
-#pragma warning disable CA1707 // Identifiers should not contain underscores
+
 using MnemonicSharingLib;
 using NBitcoin;
 
@@ -28,7 +27,7 @@ namespace MnemonicSharingLibTests
         [TestCase(WordCount.TwentyOne)]
         [TestCase(WordCount.TwentyFour)]
 
-        public void RandomMnemonicRecovery_AllPossibilitiesTests(WordCount wordCount)
+        public void RandomMnemonicRecoveryAllPossibilitiesTests(WordCount wordCount)
         {
             Mnemonic mnemonic = new Mnemonic(Wordlist.English, wordCount);
 
@@ -58,7 +57,7 @@ namespace MnemonicSharingLibTests
         [TestCase("sword hollow series occur mass holiday fresh hazard already man law priority clinic other stand urban obscure latin moon exact such")]
         [TestCase("hood little cute spot exit suffer damage old chuckle chuckle unaware hospital column wage profit slow material waste utility enact position mother trash battle")]
         [TestCase("sentence buzz route mandate lumber velvet indicate addict bunker park universe grow tomorrow radar brief prize addict enact above exit minute slow sponsor share")]
-        public void MnemonicRecovery_AllPossibilitiesTests(string words)
+        public void MnemonicRecoveryAllPossibilitiesTests(string words)
         {
             Mnemonic mnemonic = new Mnemonic(words);
             Mnemonic[] mnemonics = MnemonicSharing.SplitMnemonic(mnemonic, 3, 5);
@@ -79,7 +78,7 @@ namespace MnemonicSharingLibTests
         [TestCase("minor border hurt heart eye embrace doll symptom mutual angle gadget whisper toward early photo pass infant sea")]
         [TestCase("sword hollow series occur mass holiday fresh hazard already man law priority clinic other stand urban obscure latin moon exact sugar")]
         [TestCase("sentence buzz route mandate lumber velvet indicate addict bunker park universe grow tomorrow radar brief prize addict enact above exit minute slow sponsor seven")]
-        public void MnemonicRecovery_WrongCheckSum_LastWordChangedTests(string words)
+        public void MnemonicRecoveryWrongCheckSumLastWordChangedTests(string words)
         {
             Mnemonic mnemonic = new Mnemonic(words);
             Mnemonic[] mnemonics = MnemonicSharing.SplitMnemonic(mnemonic, 3, 5);
@@ -97,7 +96,7 @@ namespace MnemonicSharingLibTests
         [TestCase(WordCount.Eighteen)]
         [TestCase(WordCount.TwentyOne)]
         [TestCase(WordCount.TwentyFour)]
-        public void MnemonicRecovery_NotEnoughShares_Failure(WordCount wordCount)
+        public void MnemonicRecoveryNotEnoughSharesFailure(WordCount wordCount)
         {
             Mnemonic mnemonic = new Mnemonic(Wordlist.English, wordCount);
 
@@ -118,7 +117,7 @@ namespace MnemonicSharingLibTests
         }
 
         [Test]
-        public void RecoverMnemonic_ShareArrayIsNull_ThrowArgumentNullException()
+        public void RecoverMnemonicShareArrayIsNullThrowArgumentNullException()
         {
             Mnemonic[]? shares = null;
             Assert.Throws<ArgumentNullException>(() => MnemonicSharing.RecoverMnemonic(shares),
@@ -126,7 +125,7 @@ namespace MnemonicSharingLibTests
         }
 
         [Test]
-        public void RecoverMnemonic_ShareArrayIsEmpty_ThrowArgumentException()
+        public void RecoverMnemonicShareArrayIsEmptyThrowArgumentException()
         {
             Mnemonic[] shares = Array.Empty<Mnemonic>();
             Assert.Throws<ArgumentException>(() => MnemonicSharing.RecoverMnemonic(shares),
@@ -134,14 +133,14 @@ namespace MnemonicSharingLibTests
         }
 
         [Test]
-        public void SplitMnemonic_SecretIsNull_ThrowArgumentNullException()
+        public void SplitMnemonicSecretIsNullThrowArgumentNullException()
         {
             Assert.Throws<ArgumentNullException>(() => MnemonicSharing.SplitMnemonic(null, 3, 5),
                 message: "Secret mnemonic can not be a null.");
         }
 
         [Test]
-        public void SplitMnemonic_ThresholdIsZero_ThrowArgumentOutOfRangeException()
+        public void SplitMnemonicThresholdIsZeroThrowArgumentOutOfRangeException()
         {
             Mnemonic mnemonic = new Mnemonic("adjust only visit burger course talent home visit knock desk struggle throw");
             Assert.Throws<ArgumentOutOfRangeException>(() => MnemonicSharing.SplitMnemonic(mnemonic, 0, 5),
@@ -149,7 +148,7 @@ namespace MnemonicSharingLibTests
         }
 
         [Test]
-        public void SplitMnemonic_ThresholdIsBiggerThanShares_ThrowArgumentException()
+        public void SplitMnemonicThresholdIsBiggerThanSharesThrowArgumentException()
         {
             Mnemonic mnemonic = new Mnemonic("adjust only visit burger course talent home visit knock desk struggle throw");
             Assert.Throws<ArgumentException>(() => MnemonicSharing.SplitMnemonic(mnemonic, 6, 5),
@@ -157,7 +156,7 @@ namespace MnemonicSharingLibTests
         }
 
         [Test]
-        public void SplitMnemonic_NumberOfSharesIsTooBig_ThrowAArgumentOutOfRangeException()
+        public void SplitMnemonicNumberOfSharesIsTooBigThrowAArgumentOutOfRangeException()
         {
             Mnemonic mnemonic = new Mnemonic("adjust only visit burger course talent home visit knock desk struggle throw");
             Assert.Throws<ArgumentOutOfRangeException>(() => MnemonicSharing.SplitMnemonic(mnemonic, 5, 17),

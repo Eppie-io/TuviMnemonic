@@ -34,16 +34,16 @@ namespace MnemonicSharingLibTests
             Mnemonic[] mnemonics = MnemonicSharing.SplitMnemonic(mnemonic, 3, 5);
             Assert.Multiple(() =>
             {
-                Assert.That(mnemonic.Equal(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[1], mnemonics[2] })), Is.True);
-                Assert.That(mnemonic.Equal(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[1], mnemonics[3] })), Is.True);
-                Assert.That(mnemonic.Equal(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[1], mnemonics[4] })), Is.True);
-                Assert.That(mnemonic.Equal(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[2], mnemonics[3] })), Is.True);
-                Assert.That(mnemonic.Equal(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[2], mnemonics[4] })), Is.True);
-                Assert.That(mnemonic.Equal(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[3], mnemonics[4] })), Is.True);
-                Assert.That(mnemonic.Equal(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[1], mnemonics[2], mnemonics[3] })), Is.True);
-                Assert.That(mnemonic.Equal(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[1], mnemonics[2], mnemonics[4] })), Is.True);
-                Assert.That(mnemonic.Equal(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[1], mnemonics[3], mnemonics[4] })), Is.True);
-                Assert.That(mnemonic.Equal(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[2], mnemonics[3], mnemonics[4] })), Is.True);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[1], mnemonics[2] })), Is.True);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[1], mnemonics[3] })), Is.True);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[1], mnemonics[4] })), Is.True);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[2], mnemonics[3] })), Is.True);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[2], mnemonics[4] })), Is.True);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[3], mnemonics[4] })), Is.True);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[1], mnemonics[2], mnemonics[3] })), Is.True);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[1], mnemonics[2], mnemonics[4] })), Is.True);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[1], mnemonics[3], mnemonics[4] })), Is.True);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[2], mnemonics[3], mnemonics[4] })), Is.True);
             });
         }
 
@@ -103,16 +103,16 @@ namespace MnemonicSharingLibTests
             Mnemonic[] mnemonics = MnemonicSharing.SplitMnemonic(mnemonic, 3, 5);
             Assert.Multiple(() =>
             {
-                Assert.That(mnemonic.Equal(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[1] })), Is.False);
-                Assert.That(mnemonic.Equal(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[2] })), Is.False);
-                Assert.That(mnemonic.Equal(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[3] })), Is.False);
-                Assert.That(mnemonic.Equal(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[4] })), Is.False);
-                Assert.That(mnemonic.Equal(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[1], mnemonics[2] })), Is.False);
-                Assert.That(mnemonic.Equal(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[1], mnemonics[3] })), Is.False);
-                Assert.That(mnemonic.Equal(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[1], mnemonics[4] })), Is.False);
-                Assert.That(mnemonic.Equal(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[2], mnemonics[3] })), Is.False);
-                Assert.That(mnemonic.Equal(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[2], mnemonics[4] })), Is.False);
-                Assert.That(mnemonic.Equal(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[3], mnemonics[4] })), Is.False);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[1] })), Is.False);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[2] })), Is.False);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[3] })), Is.False);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[4] })), Is.False);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[1], mnemonics[2] })), Is.False);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[1], mnemonics[3] })), Is.False);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[1], mnemonics[4] })), Is.False);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[2], mnemonics[3] })), Is.False);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[2], mnemonics[4] })), Is.False);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[3], mnemonics[4] })), Is.False);
             });
         }
 

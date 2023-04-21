@@ -23,7 +23,12 @@ using TuviBytesShamirSecretSharingLib;
 namespace MnemonicSharingLib
 {
     /// <summary>
-    /// Work ONLY with CORRECT CHECKSUM mnemonics. Or last word can be changed.
+    /// Realizes Shamir's Secret Sharing Scheme for mnemonics in a sense of BIP-39 
+    /// (https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki).
+    /// Mnemonic is a byte array. It contains entropy (first 128, 160, 192, 224, 256 bits) and checksum (last 4, 5, 6, 7, 8 bits respectively).
+    /// Each 11 bits are changed to a word of special WorldList.
+    /// Shamir Sharing correctly works ONLY with CORRECT CHECKSUM mnemonics. 
+    /// Or last word can be changed to the word with valid checksum.
     /// </summary>
     public static class MnemonicSharing
     {
@@ -98,32 +103,31 @@ namespace MnemonicSharingLib
         /// <summary>
         /// Creates mnemonic from the secret share.
         /// </summary>
-        /// <param name="share">Share.</param>
-        /// <returns>Mnemonic.</returns>
         private static Mnemonic MnemonicFromShare(Share share)
         {
             Mnemonic mnemonic = new Mnemonic(Wordlist.English, share.ShareValue);
 
+            // We have to write share' index number into mnemonic's checksum place.
+            // To do that we will nullify checksum at first.
             int controlSumLength = ControlSumLength(mnemonic);
-
             int lastIndex = mnemonic.Indices[mnemonic.Indices.Length - 1];
-            int tempMask = 127 << controlSumLength; // 127 - bit tepresentation 1111111 - minimal required amount of 1 for mask
-            int newLastInex = lastIndex & tempMask;
-            newLastInex |= share.IndexNumber;
-            string newLastWord = Wordlist.English.GetWordAtIndex(newLastInex);
-            mnemonic.Words[mnemonic.Indices.Length - 1] = newLastWord;
-            mnemonic.Indices[mnemonic.Indices.Length - 1] = newLastInex;
+            int tempMask = ~((1 << controlSumLength) - 1);
+            int newLastIndex = lastIndex & tempMask; // nullify checksum
+            newLastIndex |= share.IndexNumber; // write index number
+            string newLastWord = Wordlist.English.GetWordAtIndex(newLastIndex); // get new word from WordList
+            mnemonic.Words[mnemonic.Words.Length - 1] = newLastWord;
+            mnemonic.Indices[mnemonic.Indices.Length - 1] = newLastIndex;
             return mnemonic;
         }
 
         /// <summary>
         /// Calculates length of check sum of this mnemonic.
         /// </summary>
-        /// <param name="mnemonic">Mnemonic.</param>
-        /// <returns>Checksum's length.</returns>
         private static int ControlSumLength(Mnemonic mnemonic)
         {
-            return mnemonic.Indices.Length / 3;
+            //We can see a direct relationship between number of words and checksum's length (12-4,15-5, 18-6, 21-7, 24-8)
+            //so we will use next calculation.
+            return mnemonic.Words.Length / 3;
         }
 
         /// <summary>
@@ -156,11 +160,9 @@ namespace MnemonicSharingLib
         /// <summary>
         /// Creates secret share from mnemonic.
         /// </summary>
-        /// <param name="mnemonic">Mnemonic.</param>
-        /// <returns>Share.</returns>
         private static Share ShareFromMnemonic(Mnemonic mnemonic)
         {
-            byte index = (byte)(mnemonic.Indices[mnemonic.Indices.Length - 1] & (2047 >> (MnemonicWordBitSize - ControlSumLength(mnemonic))));
+            byte index = (byte)(mnemonic.Indices[mnemonic.Indices.Length - 1] & (1 << ControlSumLength(mnemonic)) - 1);
             return new Share(index, mnemonic.GetEntropy());
         }
 

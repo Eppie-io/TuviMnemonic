@@ -45,7 +45,7 @@ namespace TestingConsoleApp
         {
             ////Experiment 3. How many mnemonics has repeated words (two or more the same words in a seed phrase).
 
-            //Console.WriteLine("Start");
+            PrintOutput("Start");
 
             int AmountOfPhrases = 0;
             for (int i = 0; i < amount; i++)
@@ -81,7 +81,7 @@ namespace TestingConsoleApp
         {
             //Experiment 5.How many repeats we have to do to get 3-5 valid partial mnemonics (after generation 16 ones).
 
-            //Console.WriteLine("Start");
+            PrintOutput("Start");
 
             List<int> listFor3 = new ();
             List<int> listFor4 = new ();
@@ -167,7 +167,7 @@ namespace TestingConsoleApp
         /// <param name="amount">Amount of mnemonics.</param>
         private static void CalculateStatisticsOfValidShares(int amount)
         {
-            //Console.WriteLine("Start");
+            PrintOutput("Start");
 
             int[] result = new int[17];
 
@@ -187,7 +187,7 @@ namespace TestingConsoleApp
                 result[counter]++;
             }
 
-            //Console.WriteLine("Result:");
+            PrintOutput("Result:");
             for (int i = 0; i < 17; i++)
             {
                 Console.WriteLine($"With {i} valid shares: {result[i]} initial mnemonics.");
@@ -202,15 +202,15 @@ namespace TestingConsoleApp
         /// <param name="numberOfShares">Number of shares.</param>
         private static void SplitMnemonicAndShowShares(byte threshold, byte numberOfShares)
         {
-            //Console.WriteLine("Start");
+            PrintOutput("Start");
             Mnemonic mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
             //Mnemonic mnemonic = new Mnemonic("three three three three three three three three three three three tiger");
             int counter = 0;
-            //Console.WriteLine("Initial mnemonic:");
+            PrintOutput("Initial mnemonic:");
             PrintWords(mnemonic);
 
             Mnemonic[] mnemonics = MnemonicSharing.SplitMnemonic(mnemonic, threshold, numberOfShares);
-            //Console.WriteLine("Partial mnemonics:");
+            PrintOutput("Partial mnemonics:");
             foreach (var mn in mnemonics)
             {
                 PrintWords(mn);
@@ -219,8 +219,8 @@ namespace TestingConsoleApp
                     counter++;
             }
 
-            //Console.WriteLine("---------------------------");
-            //Console.WriteLine("Recovered mnemonic from shares:");
+            PrintOutput("---------------------------");
+            PrintOutput("Recovered mnemonic from shares:");
             Mnemonic recoveredMnemonic = MnemonicSharing.RecoverMnemonic(mnemonics);
             PrintWords(recoveredMnemonic);
         }
@@ -234,7 +234,7 @@ namespace TestingConsoleApp
         {
             Mnemonic mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
             int counter = 0;
-            //Console.WriteLine("Initial mnemonic:");
+            PrintOutput("Initial mnemonic:");
             PrintWords(mnemonic);
 
             Mnemonic[] mnemonics = MnemonicSharing.SplitMnemonic(mnemonic, threshold, numberOfShares);
@@ -254,11 +254,10 @@ namespace TestingConsoleApp
         /// <param name="amount">Amount of mnemonics.</param>
         private static void SavingMnemonicsInFile(int amount)
         {
-            //Console.WriteLine("Start");
+            PrintOutput("Start");
             int counter = 0;
 
             string dirPath = $"data\\";
-            //var directory = new DirectoryInfo(dirPath);
             if (!Directory.Exists(dirPath))
             {
                 Directory.CreateDirectory(dirPath);
@@ -276,17 +275,15 @@ namespace TestingConsoleApp
 
                 if (File.Exists(filePath))
                 {
-                    using (StreamReader stream = new StreamReader(filePath))
+                    using StreamReader stream = new StreamReader(filePath);
+                    if (IsFileContainsMnemonic(stream, mnemonic))
                     {
-                        if (IsFileContainsMnemonic(stream, mnemonic))
-                        {
-                            //Console.WriteLine("Current mnemonic already exists!!!");
-                            PrintWords(mnemonic);
-                        }
-                        else
-                        {
-                            NeedToWriteMnemonic = true;
-                        }
+                        PrintOutput("Current mnemonic already exists!!!");
+                        PrintWords(mnemonic);
+                    }
+                    else
+                    {
+                        NeedToWriteMnemonic = true;
                     }
                 }
                 else
@@ -296,10 +293,8 @@ namespace TestingConsoleApp
 
                 if (NeedToWriteMnemonic)
                 {
-                    using (StreamWriter outputFile = new StreamWriter(filePath, true))
-                    {
-                        WriteMnemonicToFile(outputFile, mnemonic);
-                    }
+                    using StreamWriter outputFile = new StreamWriter(filePath, true);
+                    WriteMnemonicToFile(outputFile, mnemonic);
                 }
             }
 
@@ -315,7 +310,7 @@ namespace TestingConsoleApp
         {
             uint amountOfValidMnemonics = 0;
             int counter = 0;
-            //Console.WriteLine("Start");
+            PrintOutput("Start");
             Dictionary<string, int> storage = new Dictionary<string, int>();
             for (int i = 0; i < amount; i++)
             {
@@ -335,7 +330,7 @@ namespace TestingConsoleApp
                         if (storage.ContainsKey(line))
                         {
                             storage[line]++;
-                            //Console.WriteLine("This mnemonic is repeated!!!");
+                            PrintOutput("This mnemonic is repeated!!!");
                             counter++;
                         }
                         else
@@ -375,29 +370,10 @@ namespace TestingConsoleApp
         {
             foreach (var item in list)
             {
-                if (item.Equal(mnemonic))
+                if (item.EqualsTo(mnemonic))
                     return true;
             }
             return false;
-        }
-
-        private static byte[] GetEntropy(Mnemonic mnemonic) //get entropy?
-        {
-            if (mnemonic is null)
-            {
-                throw new ArgumentNullException(nameof(mnemonic));
-            }
-
-            int[] indices = mnemonic.Indices;
-            BigInteger number = new BigInteger(0);
-            foreach (var index in indices)
-            {
-                number <<= 11;
-                number |= index;
-            }
-
-            number >>= 4;
-            return number.ToByteArray(true, true);
         }
 
         private static void PrintWords(Mnemonic mnemonic)
@@ -414,13 +390,9 @@ namespace TestingConsoleApp
             return (mnemonic.Words[0], mnemonic.Words[1]);
         }
 
-        private static void PrintNumbers(Mnemonic mnemonic)
+        private static void PrintOutput(string output)
         {
-            foreach (int num in mnemonic.Indices)
-            {
-                Console.Write(num + " ");
-            }
-            Console.WriteLine();
+            Console.WriteLine(output);
         }
     }
 }

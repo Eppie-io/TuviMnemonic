@@ -16,6 +16,7 @@
 
 using NBitcoin;
 using System;
+using System.Linq;
 
 namespace MnemonicSharingLib
 {
@@ -27,18 +28,13 @@ namespace MnemonicSharingLib
         /// <param name="mnemonic">One mnemonic.</param>
         /// <param name="anotherMnemonic">Another mnemonic.</param>
         /// <returns>True, if all words are the same. False otherwise.</returns>
-        public static bool Equal(this Mnemonic mnemonic, Mnemonic anotherMnemonic)
+        public static bool EqualsTo(this Mnemonic mnemonic, Mnemonic anotherMnemonic)
         {
-            if (mnemonic is null)
+            if (mnemonic is null || anotherMnemonic is null)
             {
-                throw new ArgumentNullException(nameof(mnemonic));
+                return false;
             }
             
-            if (anotherMnemonic is null)
-            {
-                throw new ArgumentNullException(nameof(anotherMnemonic));
-            }
-
             string[] words = mnemonic.Words;
             string[] words2 = anotherMnemonic.Words;
 
@@ -47,12 +43,7 @@ namespace MnemonicSharingLib
                 return false;
             }
 
-            for (int i = 0; i < words.Length; i++)
-            {
-                if (words[i] != words2[i])
-                    return false;
-            }
-            return true;
+            return words.SequenceEqual(words2);
         }
     }
 }

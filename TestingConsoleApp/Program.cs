@@ -366,16 +366,6 @@ namespace TestingConsoleApp
             fileWriter.WriteLine(line);
         }
 
-        private static bool ListHasMnemonic(List<Mnemonic> list, Mnemonic mnemonic)
-        {
-            foreach (var item in list)
-            {
-                if (item.EqualsTo(mnemonic))
-                    return true;
-            }
-            return false;
-        }
-
         private static void PrintWords(Mnemonic mnemonic)
         {
             Console.WriteLine(string.Join(" ", mnemonic.Words));

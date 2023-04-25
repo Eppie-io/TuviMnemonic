@@ -37,11 +37,6 @@ namespace MnemonicSharingLib
             string[] words = mnemonic.Words;
             string[] words2 = anotherMnemonic.Words;
 
-            if (words.Length != words2.Length)
-            {
-                return false;
-            }
-
             return words.SequenceEqual(words2);
         }
     }

@@ -378,11 +378,7 @@ namespace TestingConsoleApp
 
         private static void PrintWords(Mnemonic mnemonic)
         {
-            foreach (string word in mnemonic.Words)
-            {
-                Console.Write(word + " ");
-            }
-            Console.WriteLine();
+            Console.WriteLine(string.Join(" ", mnemonic.Words));
         }
 
         private static (string, string) GetTwoWords(Mnemonic mnemonic)

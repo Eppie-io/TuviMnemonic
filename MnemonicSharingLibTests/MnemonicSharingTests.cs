@@ -29,22 +29,25 @@ namespace MnemonicSharingLibTests
 
         public void RandomMnemonicRecoveryAllPossibilitiesTests(WordCount wordCount)
         {
-            Mnemonic mnemonic = new Mnemonic(Wordlist.English, wordCount);
-
-            Mnemonic[] mnemonics = MnemonicSharing.SplitMnemonic(mnemonic, 3, 5);
-            Assert.Multiple(() =>
+            for (int i = 0; i < 10; i++)
             {
-                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[1], mnemonics[2] })), Is.True);
-                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[1], mnemonics[3] })), Is.True);
-                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[1], mnemonics[4] })), Is.True);
-                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[2], mnemonics[3] })), Is.True);
-                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[2], mnemonics[4] })), Is.True);
-                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[3], mnemonics[4] })), Is.True);
-                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[1], mnemonics[2], mnemonics[3] })), Is.True);
-                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[1], mnemonics[2], mnemonics[4] })), Is.True);
-                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[1], mnemonics[3], mnemonics[4] })), Is.True);
-                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[2], mnemonics[3], mnemonics[4] })), Is.True);
-            });
+                Mnemonic mnemonic = new Mnemonic(Wordlist.English, wordCount);
+
+                Mnemonic[] mnemonics = MnemonicSharing.SplitMnemonic(mnemonic, 3, 5);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[1], mnemonics[2] })), Is.True);
+                    Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[1], mnemonics[3] })), Is.True);
+                    Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[1], mnemonics[4] })), Is.True);
+                    Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[2], mnemonics[3] })), Is.True);
+                    Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[2], mnemonics[4] })), Is.True);
+                    Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[3], mnemonics[4] })), Is.True);
+                    Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[1], mnemonics[2], mnemonics[3] })), Is.True);
+                    Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[1], mnemonics[2], mnemonics[4] })), Is.True);
+                    Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[1], mnemonics[3], mnemonics[4] })), Is.True);
+                    Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[2], mnemonics[3], mnemonics[4] })), Is.True);
+                });
+            }
         }
 
         [TestCase("adjust only visit burger course talent home visit knock desk struggle throw")]
@@ -82,13 +85,13 @@ namespace MnemonicSharingLibTests
         {
             Mnemonic mnemonic = new Mnemonic(words);
             Mnemonic[] mnemonics = MnemonicSharing.SplitMnemonic(mnemonic, 3, 5);
-            Mnemonic actealResult = MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[1], mnemonics[2] });
+            Mnemonic actualResult = MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[1], mnemonics[2] });
             for (int i = 0; i < mnemonic.Words.Length - 1; i++)
             {
-                Assert.That(actealResult.Words[i], Is.EqualTo(mnemonic.Words[i]));
+                Assert.That(actualResult.Words[i], Is.EqualTo(mnemonic.Words[i]));
             }
 
-            Assert.That(actealResult.Words[^1], Is.Not.EqualTo(mnemonic.Words[^1]));
+            Assert.That(actualResult.Words[^1], Is.Not.EqualTo(mnemonic.Words[^1]));
         }
 
         [TestCase(WordCount.Twelve)]

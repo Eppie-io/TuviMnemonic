@@ -16,7 +16,7 @@
 
 using NBitcoin;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using TuviBytesShamirSecretSharingLib;
 
@@ -55,12 +55,12 @@ namespace MnemonicSharingLib
                 number |= index;
             }
 
-            number >>= ControlSumLength(mnemonic);
-            return number.ToBigEndianByteArray();
+            number >>= CheckSumLength(mnemonic);
+            return number.ToBigEndianByteArrayWithSpecificLength(mnemonic.GetEntropyByteSize());
         }
 
         /// <summary>
-        /// Split mnemonic into partial mnemonics.
+        /// Splits mnemonic into partial mnemonics.
         /// </summary>
         /// <param name="mnemonic">Mnemonic.</param>
         /// <param name="threshold">Threshold of scheme.</param>
@@ -90,13 +90,8 @@ namespace MnemonicSharingLib
 
             byte[] entropy = mnemonic.GetEntropy();
             Share[] shares = SecretSharing.SplitSecret(threshold, numberOfShares, entropy);
-
-            Mnemonic[] mnemonicShares = new Mnemonic[numberOfShares];
-            for (int i = 0; i < numberOfShares; i++)
-            {
-                mnemonicShares[i] = MnemonicFromShare(shares[i]);
-            }
-
+            Mnemonic[] mnemonicShares = shares.Select(item => MnemonicFromShare(item)).ToArray();
+           
             return mnemonicShares;
         }
 
@@ -107,11 +102,11 @@ namespace MnemonicSharingLib
         {
             Mnemonic mnemonic = new Mnemonic(Wordlist.English, share.ShareValue);
 
-            // We have to write share' index number into mnemonic's checksum place.
+            // We have to write share's index number into mnemonic's checksum place.
             // To do that we will nullify checksum at first.
-            int controlSumLength = ControlSumLength(mnemonic);
+            int checkSumLength = CheckSumLength(mnemonic);
             int lastIndex = mnemonic.Indices[mnemonic.Indices.Length - 1];
-            int tempMask = ~((1 << controlSumLength) - 1);
+            int tempMask = ~((1 << checkSumLength) - 1);
             int newLastIndex = lastIndex & tempMask; // nullify checksum
             newLastIndex |= share.IndexNumber; // write index number
             string newLastWord = Wordlist.English.GetWordAtIndex(newLastIndex); // get new word from WordList
@@ -123,15 +118,15 @@ namespace MnemonicSharingLib
         /// <summary>
         /// Calculates length of check sum of this mnemonic.
         /// </summary>
-        private static int ControlSumLength(Mnemonic mnemonic)
+        private static int CheckSumLength(Mnemonic mnemonic)
         {
-            //We can see a direct relationship between number of words and checksum's length (12-4,15-5, 18-6, 21-7, 24-8)
+            //We can see a direct dependency between number of words and checksum's length (12-4,15-5, 18-6, 21-7, 24-8)
             //so we will use next calculation.
             return mnemonic.Words.Length / 3;
         }
 
         /// <summary>
-        /// Recover mnemonic from partial ones.
+        /// Recovers mnemonic from partial ones.
         /// </summary>
         /// <param name="mnemonics">Partial mnemonics.</param>
         /// <returns>Main mnemonic.</returns>
@@ -147,11 +142,7 @@ namespace MnemonicSharingLib
                 throw new ArgumentException("You should send at least 1 mnemonic to recover a secret.", nameof(mnemonics));
             }
 
-            Share[] shares = new Share[mnemonics.Length];
-            for (int i = 0; i < mnemonics.Length; i++)
-            {
-                shares[i] = ShareFromMnemonic(mnemonics[i]);
-            }
+            Share[] shares = mnemonics.Select(item => ShareFromMnemonic(item)).ToArray();
 
             byte[] entropy = SecretSharing.RecoverSecret(shares);
             return new Mnemonic(Wordlist.English, entropy);
@@ -162,34 +153,8 @@ namespace MnemonicSharingLib
         /// </summary>
         private static Share ShareFromMnemonic(Mnemonic mnemonic)
         {
-            byte index = (byte)(mnemonic.Indices[mnemonic.Indices.Length - 1] & (1 << ControlSumLength(mnemonic)) - 1);
+            byte index = (byte)(mnemonic.Indices[mnemonic.Indices.Length - 1] & (1 << CheckSumLength(mnemonic)) - 1);
             return new Share(index, mnemonic.GetEntropy());
-        }
-
-
-        /// <summary>
-        /// Converting BigInteger into byte array with big-endian format.
-        /// </summary>
-        /// <param name="number">BigInteger number.</param>
-        /// <returns>Byte array with big-endian format.</returns>
-        private static byte[] ToBigEndianByteArray(this BigInteger number)
-        {
-            BigInteger temp = number;
-            List<byte> result = new List<byte>();
-            while (temp > 0)
-            {
-                byte currentByte = (byte)(temp & 255);
-                result.Add(currentByte);
-                temp >>= 8;
-            }
-
-            while (result.Count % 4 != 0)
-            {
-                result.Add(0);
-            }
-
-            result.Reverse();
-            return result.ToArray();
         }
     }
 }

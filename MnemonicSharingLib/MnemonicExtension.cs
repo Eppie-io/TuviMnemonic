@@ -15,6 +15,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 using NBitcoin;
+using System;
 using System.Linq;
 
 namespace MnemonicSharingLib
@@ -38,6 +39,35 @@ namespace MnemonicSharingLib
             string[] words2 = anotherMnemonic.Words;
 
             return words.SequenceEqual(words2);
+        }
+
+        /// <summary>
+        /// Method returns entropy length in bytes (16, 20, ..., 32)
+        /// </summary>
+        /// <param name="mnemonic">Mnemonic.</param>
+        /// <returns>Entropy length.</returns>
+        public static int GetEntropyByteSize(this Mnemonic mnemonic)
+        {
+            if (mnemonic is null)
+            {
+                throw new ArgumentNullException(nameof(mnemonic));
+            }
+
+            switch (mnemonic.Indices.Length)
+            {
+                case 12:
+                    return 16;
+                case 15:
+                    return 20;
+                case 18:
+                    return 24;
+                case 21:
+                    return 28;
+                case 24:
+                    return 32;
+                default:
+                    throw new ArgumentException("Unknown mnemonic size.");
+            }
         }
     }
 }

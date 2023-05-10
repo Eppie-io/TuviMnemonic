@@ -1,0 +1,3 @@
+[submodule "TuviBytesShamirSecretSharingLib"]
+	path = gitmodules/TuviBytesShamirSecretSharingLib
+	url = ../TuviBytesShamirSecretSharingLib.git

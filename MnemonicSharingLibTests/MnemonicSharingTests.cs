@@ -27,7 +27,7 @@ namespace MnemonicSharingLibTests
         [TestCase(WordCount.TwentyOne)]
         [TestCase(WordCount.TwentyFour)]
 
-        public void RandomMnemonicRecoveryAllPossibilitiesTests(WordCount wordCount)
+        public void RandomMnemonicRecoveryAllPossibilities(WordCount wordCount)
         {
             for (int i = 0; i < 10; i++)
             {
@@ -60,7 +60,7 @@ namespace MnemonicSharingLibTests
         [TestCase("sword hollow series occur mass holiday fresh hazard already man law priority clinic other stand urban obscure latin moon exact such")]
         [TestCase("hood little cute spot exit suffer damage old chuckle chuckle unaware hospital column wage profit slow material waste utility enact position mother trash battle")]
         [TestCase("sentence buzz route mandate lumber velvet indicate addict bunker park universe grow tomorrow radar brief prize addict enact above exit minute slow sponsor share")]
-        public void MnemonicRecoveryAllPossibilitiesTests(string words)
+        public void MnemonicRecoveryAllPossibilities(string words)
         {
             Mnemonic mnemonic = new Mnemonic(words);
             Mnemonic[] mnemonics = MnemonicSharing.SplitMnemonic(mnemonic, 3, 5);
@@ -81,7 +81,7 @@ namespace MnemonicSharingLibTests
         [TestCase("minor border hurt heart eye embrace doll symptom mutual angle gadget whisper toward early photo pass infant sea")]
         [TestCase("sword hollow series occur mass holiday fresh hazard already man law priority clinic other stand urban obscure latin moon exact sugar")]
         [TestCase("sentence buzz route mandate lumber velvet indicate addict bunker park universe grow tomorrow radar brief prize addict enact above exit minute slow sponsor seven")]
-        public void MnemonicRecoveryWrongCheckSumLastWordChangedTests(string words)
+        public void MnemonicRecoveryWrongCheckSumLastWordChanged(string words)
         {
             Mnemonic mnemonic = new Mnemonic(words);
             Mnemonic[] mnemonics = MnemonicSharing.SplitMnemonic(mnemonic, 3, 5);
@@ -116,6 +116,44 @@ namespace MnemonicSharingLibTests
                 Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[2], mnemonics[3] })), Is.False);
                 Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[2], mnemonics[4] })), Is.False);
                 Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[3], mnemonics[4] })), Is.False);
+            });
+        }
+
+        [Test]
+        public void ValidPartialMnemonicsRecovery()
+        {
+            Mnemonic mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
+
+            Mnemonic[] mnemonics = MnemonicSharing.SplitMnemonicOnlyValidPartialOnes(mnemonic, 3, 4);
+            foreach (var mn in mnemonics)
+            {
+                Assert.That(mn.IsValidChecksum, Is.True);
+            }
+            Assert.Multiple(() =>
+            {
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[1], mnemonics[2] })), Is.True);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[1], mnemonics[3] })), Is.True);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[2], mnemonics[3] })), Is.True);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[1], mnemonics[2], mnemonics[3] })), Is.True);
+            });
+        }
+
+        [Test]
+        public async Task ValidPartialMnemonicsRecoveryAsync()
+        {
+            Mnemonic mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
+
+            Mnemonic[] mnemonics = await MnemonicSharing.SplitMnemonicOnlyValidPartialOnesAsync(mnemonic, 3, 4).ConfigureAwait(false);
+            foreach (var mn in mnemonics)
+            {
+                Assert.That(mn.IsValidChecksum, Is.True);
+            }
+            Assert.Multiple(() =>
+            {
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[1], mnemonics[2] })), Is.True);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[1], mnemonics[3] })), Is.True);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[0], mnemonics[2], mnemonics[3] })), Is.True);
+                Assert.That(mnemonic.EqualsTo(MnemonicSharing.RecoverMnemonic(new Mnemonic[] { mnemonics[1], mnemonics[2], mnemonics[3] })), Is.True);
             });
         }
 
@@ -163,6 +201,37 @@ namespace MnemonicSharingLibTests
         {
             Mnemonic mnemonic = new Mnemonic("adjust only visit burger course talent home visit knock desk struggle throw");
             Assert.Throws<ArgumentOutOfRangeException>(() => MnemonicSharing.SplitMnemonic(mnemonic, 5, 17),
+                message: "Too many shares, max amount - 16.");
+        }
+
+        [Test]
+        public void SplitValidMnemonicSecretIsNullThrowArgumentNullException()
+        {
+            Assert.Throws<ArgumentNullException>(() => MnemonicSharing.SplitMnemonicOnlyValidPartialOnes(null, 2, 3),
+                message: "Secret mnemonic can not be a null.");
+        }
+
+        [Test]
+        public void SplitValidMnemonicThresholdIsZeroThrowArgumentOutOfRangeException()
+        {
+            Mnemonic mnemonic = new Mnemonic("adjust only visit burger course talent home visit knock desk struggle throw");
+            Assert.Throws<ArgumentOutOfRangeException>(() => MnemonicSharing.SplitMnemonicOnlyValidPartialOnes(mnemonic, 0, 4),
+                message: "Threshold can not be 0.");
+        }
+
+        [Test]
+        public void SplitValidMnemonicThresholdIsBiggerThanSharesThrowArgumentException()
+        {
+            Mnemonic mnemonic = new Mnemonic("adjust only visit burger course talent home visit knock desk struggle throw");
+            Assert.Throws<ArgumentException>(() => MnemonicSharing.SplitMnemonicOnlyValidPartialOnes(mnemonic, 7, 6),
+                message: "Threshold can not be bigger than number of shares.");
+        }
+
+        [Test]
+        public void SplitValidMnemonicNumberOfSharesIsTooBigThrowAArgumentOutOfRangeException()
+        {
+            Mnemonic mnemonic = new Mnemonic("adjust only visit burger course talent home visit knock desk struggle throw");
+            Assert.Throws<ArgumentOutOfRangeException>(() => MnemonicSharing.SplitMnemonicOnlyValidPartialOnes(mnemonic, 2, 18),
                 message: "Too many shares, max amount - 16.");
         }
     }

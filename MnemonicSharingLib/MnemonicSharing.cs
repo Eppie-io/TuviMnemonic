@@ -16,8 +16,10 @@
 
 using NBitcoin;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 using TuviBytesShamirSecretSharingLib;
 
 namespace MnemonicSharingLib
@@ -96,11 +98,83 @@ namespace MnemonicSharingLib
         }
 
         /// <summary>
+        /// Split mnemonic into only valid partial mnemonics.
+        /// Will work slower the more words mnemonic contains (extremely slow for 21 or 24 words).
+        /// this is because probability that partial mnemonic is valid is reduced significantly.
+        /// </summary>
+        /// <param name="mnemonic">Mnemonic.</param>
+        /// <param name="threshold">Threshold of scheme.</param>
+        /// <param name="numberOfShares">Amount of shares.</param>
+        /// <returns>Partial mnemonics.</returns>
+        public static Mnemonic[] SplitMnemonicOnlyValidPartialOnes(Mnemonic mnemonic, byte threshold, byte numberOfShares)
+        {
+            if (mnemonic is null)
+            {
+                throw new ArgumentNullException(nameof(mnemonic));
+            }
+
+            if (threshold == 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(threshold), "Threshold can not be 0.");
+            }
+
+            if (threshold > numberOfShares)
+            {
+                throw new ArgumentException("Threshold can not be bigger than number of shares.");
+            }
+
+            if (numberOfShares > MaxAmountOfShares)
+            {
+                throw new ArgumentOutOfRangeException(nameof(numberOfShares), $"Too many shares, max amount - {MaxAmountOfShares}.");
+            }
+
+            byte[] entropy = mnemonic.GetEntropy();
+            List<Mnemonic> mnemonicShares = new List<Mnemonic>();
+            bool isReady = false;
+
+            while (!isReady)
+            {
+                mnemonicShares = new List<Mnemonic>();
+                Share[] shares = SecretSharing.SplitSecret(threshold, MaxAmountOfShares, entropy);
+                foreach (var share in shares)
+                {
+                    Mnemonic mn = MnemonicFromShare(share);
+                    if (mn.IsValidChecksum == true)
+                    {
+                        mnemonicShares.Add(mn);
+                    }
+
+                    if (mnemonicShares.Count == numberOfShares)
+                    {
+                        isReady = true;
+                        break;
+                    }
+                }
+            }
+
+            return mnemonicShares.ToArray();
+        }
+
+        /// <summary>
+        /// Split mnemonic into only valid partial mnemonics asyncroniously.
+        /// Will work slower the more words mnemonic contains (extremely slow for 21 or 24 words).
+        /// this is because probability that partial mnemonic is valid is reduced significantly.
+        /// </summary>
+        /// <param name="mnemonic">Mnemonic.</param>
+        /// <param name="threshold">Threshold of scheme.</param>
+        /// <param name="numberOfShares">Amount of shares.</param>
+        /// <returns>Partial mnemonics.</returns>
+        public static async Task<Mnemonic[]> SplitMnemonicOnlyValidPartialOnesAsync(Mnemonic mnemonic, byte threshold, byte numberOfShares)
+        {
+            return await Task.Run(() => SplitMnemonicOnlyValidPartialOnes(mnemonic, threshold, numberOfShares)).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Creates mnemonic from the secret share.
         /// </summary>
         private static Mnemonic MnemonicFromShare(Share share)
         {
-            Mnemonic mnemonic = new Mnemonic(Wordlist.English, share.ShareValue);
+            Mnemonic mnemonic = new Mnemonic(Wordlist.English, share.GetShareValue());
 
             // We have to write share's index number into mnemonic's checksum place.
             // To do that we will nullify checksum at first.

@@ -31,8 +31,8 @@ namespace TestingConsoleApp
             //HowLongToWaitTillValidGroup(20000);
 
             //HowManyMnemonicsHaveRepeatedWords(100);
-
-            SplitMnemonicAndShowShares(3, 16);
+            SplitValidMnemonicAndShowShares(3, 6);
+            //SplitMnemonicAndShowShares(3, 16);
             //HowManyValidSharesInMnemonicShares(2, 16);
             //HowManyMnemonicsHaveRepeatedWords(10000);
         }
@@ -210,6 +210,36 @@ namespace TestingConsoleApp
             PrintWords(mnemonic);
 
             Mnemonic[] mnemonics = MnemonicSharing.SplitMnemonic(mnemonic, threshold, numberOfShares);
+            PrintOutput("Partial mnemonics:");
+            foreach (var mn in mnemonics)
+            {
+                PrintWords(mn);
+                Console.WriteLine($"Is valid? {mn.IsValidChecksum}");
+                if (mn.IsValidChecksum == true)
+                    counter++;
+            }
+
+            PrintOutput("---------------------------");
+            PrintOutput("Recovered mnemonic from shares:");
+            Mnemonic recoveredMnemonic = MnemonicSharing.RecoverMnemonic(mnemonics);
+            PrintWords(recoveredMnemonic);
+        }
+
+        /// <summary>
+        /// Split mnemonic into shares and show them. Reccover initial mnemonic from shares.
+        /// </summary>
+        /// <param name="threshold">Threshold of sharing.</param>
+        /// <param name="numberOfShares">Number of shares.</param>
+        private static void SplitValidMnemonicAndShowShares(byte threshold, byte numberOfShares)
+        {
+            PrintOutput("Start");
+            Mnemonic mnemonic = new Mnemonic(Wordlist.English, WordCount.Twelve);
+            //Mnemonic mnemonic = new Mnemonic("three three three three three three three three three three three tiger");
+            int counter = 0;
+            PrintOutput("Initial mnemonic:");
+            PrintWords(mnemonic);
+
+            Mnemonic[] mnemonics = MnemonicSharing.SplitMnemonicOnlyValidPartialOnes(mnemonic, threshold, numberOfShares);
             PrintOutput("Partial mnemonics:");
             foreach (var mn in mnemonics)
             {

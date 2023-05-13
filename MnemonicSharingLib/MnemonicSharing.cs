@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Threading;
 using System.Threading.Tasks;
 using TuviBytesShamirSecretSharingLib;
 
@@ -36,6 +37,7 @@ namespace MnemonicSharingLib
     {
         private const int MnemonicWordBitSize = 11;
         private const int MaxAmountOfShares = 16;
+        private const long defaultNumberOfAttempts = 10000; //Enough for 6 valid partial mnemonics of 12 words. Calculations lasts ~ 9 seconds
 
         /// <summary>
         /// Get entropy of this mnemonic.
@@ -106,7 +108,7 @@ namespace MnemonicSharingLib
         /// <param name="threshold">Threshold of scheme.</param>
         /// <param name="numberOfShares">Amount of shares.</param>
         /// <returns>Partial mnemonics.</returns>
-        public static Mnemonic[] SplitMnemonicOnlyValidPartialOnes(Mnemonic mnemonic, byte threshold, byte numberOfShares)
+        public static Mnemonic[] SplitMnemonicOnlyValidPartialOnes(Mnemonic mnemonic, byte threshold, byte numberOfShares, long numberOfAttempts = defaultNumberOfAttempts, CancellationToken cancellationToken = default)
         {
             if (mnemonic is null)
             {
@@ -131,9 +133,14 @@ namespace MnemonicSharingLib
             byte[] entropy = mnemonic.GetEntropy();
             List<Mnemonic> mnemonicShares = new List<Mnemonic>();
             bool isReady = false;
+            long counter = 0;
 
-            while (!isReady)
+            while (!isReady && counter < numberOfAttempts)
             {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    throw new PartialMnemonicsCreationException("Operation was cancelled");
+                }
                 mnemonicShares = new List<Mnemonic>();
                 Share[] shares = SecretSharing.SplitSecret(threshold, MaxAmountOfShares, entropy);
                 foreach (var share in shares)
@@ -150,6 +157,13 @@ namespace MnemonicSharingLib
                         break;
                     }
                 }
+                counter++;
+            }
+
+            if (!isReady)
+            {
+                throw new PartialMnemonicsCreationException("Couldn't find enough valid mnemonics. " +
+                    "Please decrease amount of partial mnemonics or increase amount of attempts.");
             }
 
             return mnemonicShares.ToArray();
@@ -164,9 +178,9 @@ namespace MnemonicSharingLib
         /// <param name="threshold">Threshold of scheme.</param>
         /// <param name="numberOfShares">Amount of shares.</param>
         /// <returns>Partial mnemonics.</returns>
-        public static async Task<Mnemonic[]> SplitMnemonicOnlyValidPartialOnesAsync(Mnemonic mnemonic, byte threshold, byte numberOfShares)
+        public static async Task<Mnemonic[]> SplitMnemonicOnlyValidPartialOnesAsync(Mnemonic mnemonic, byte threshold, byte numberOfShares, long numberOfAttempts = defaultNumberOfAttempts, CancellationToken cancellationToken = default)
         {
-            return await Task.Run(() => SplitMnemonicOnlyValidPartialOnes(mnemonic, threshold, numberOfShares)).ConfigureAwait(false);
+            return await Task.Run(() => SplitMnemonicOnlyValidPartialOnes(mnemonic, threshold, numberOfShares, numberOfAttempts, cancellationToken)).ConfigureAwait(false);
         }
 
         /// <summary>

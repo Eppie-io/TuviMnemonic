@@ -44,6 +44,7 @@ namespace MnemonicSharingLib
         /// </summary>
         /// <param name="mnemonic">Mnemonic to get entropy.</param>
         /// <returns>Entropy as byte array.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static byte[] GetEntropy(this Mnemonic mnemonic)
         {
             if (mnemonic is null)
@@ -70,6 +71,9 @@ namespace MnemonicSharingLib
         /// <param name="threshold">Threshold of scheme.</param>
         /// <param name="numberOfShares">Amount of shares.</param>
         /// <returns>Partial mnemonics.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         public static Mnemonic[] SplitMnemonic(Mnemonic mnemonic, byte threshold, byte numberOfShares)
         {
             if (mnemonic is null)
@@ -108,6 +112,10 @@ namespace MnemonicSharingLib
         /// <param name="threshold">Threshold of scheme.</param>
         /// <param name="numberOfShares">Amount of shares.</param>
         /// <returns>Partial mnemonics.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="PartialMnemonicsCreationException"></exception>
         public static Mnemonic[] SplitMnemonicOnlyValidPartialOnes(Mnemonic mnemonic, byte threshold, byte numberOfShares, long numberOfAttempts = defaultNumberOfAttempts, CancellationToken cancellationToken = default)
         {
             if (mnemonic is null)
@@ -139,7 +147,7 @@ namespace MnemonicSharingLib
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    throw new PartialMnemonicsCreationException("Operation was cancelled");
+                    cancellationToken.ThrowIfCancellationRequested();
                 }
                 mnemonicShares = new List<Mnemonic>();
                 Share[] shares = SecretSharing.SplitSecret(threshold, MaxAmountOfShares, entropy);
@@ -218,6 +226,8 @@ namespace MnemonicSharingLib
         /// </summary>
         /// <param name="mnemonics">Partial mnemonics.</param>
         /// <returns>Main mnemonic.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
         public static Mnemonic RecoverMnemonic(Mnemonic[] mnemonics)
         {
             if (mnemonics is null)

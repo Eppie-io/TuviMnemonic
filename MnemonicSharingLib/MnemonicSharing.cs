@@ -145,10 +145,8 @@ namespace MnemonicSharingLib
 
             while (!isReady && counter < numberOfAttempts)
             {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-                }
+                cancellationToken.ThrowIfCancellationRequested();
+                
                 mnemonicShares = new List<Mnemonic>();
                 Share[] shares = SecretSharing.SplitSecret(threshold, MaxAmountOfShares, entropy);
                 foreach (var share in shares)

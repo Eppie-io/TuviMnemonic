@@ -50,6 +50,7 @@ namespace MnemonicSharingLib
         /// <param name="number">BigInteger number.</param>
         /// <param name="length">Array length.</param>
         /// <returns>Byte array with big-endian format.</returns>
+        /// <exception cref="ArgumentException"></exception>
         public static byte[] ToBigEndianByteArrayWithSpecificLength(this BigInteger number, int length)
         {
             if (number.ToBigEndianByteArray().Length > length)

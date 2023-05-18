@@ -42,7 +42,7 @@ namespace MnemonicSharingLib
         }
 
         /// <summary>
-        /// Method returns entropy length in bytes (16, 20, ..., 32)
+        /// Method returns entropy length in bytes (16, 20, ..., 32).
         /// </summary>
         /// <param name="mnemonic">Mnemonic.</param>
         /// <returns>Entropy length.</returns>

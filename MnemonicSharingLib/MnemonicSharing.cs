@@ -111,6 +111,8 @@ namespace MnemonicSharingLib
         /// <param name="mnemonic">Mnemonic.</param>
         /// <param name="threshold">Threshold of scheme.</param>
         /// <param name="numberOfShares">Amount of shares.</param>
+        /// <param name="numberOfAttempts">Number of attempts for finding proper splitting before throwing an exception.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Partial mnemonics.</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
@@ -183,6 +185,8 @@ namespace MnemonicSharingLib
         /// <param name="mnemonic">Mnemonic.</param>
         /// <param name="threshold">Threshold of scheme.</param>
         /// <param name="numberOfShares">Amount of shares.</param>
+        /// <param name="numberOfAttempts">Number of attempts for finding proper splitting before throwing an exception.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>Partial mnemonics.</returns>
         public static async Task<Mnemonic[]> SplitMnemonicOnlyValidPartialOnesAsync(Mnemonic mnemonic, byte threshold, byte numberOfShares, long numberOfAttempts = defaultNumberOfAttempts, CancellationToken cancellationToken = default)
         {
@@ -247,6 +251,8 @@ namespace MnemonicSharingLib
         /// <summary>
         /// Creates secret share from mnemonic.
         /// </summary>
+        /// <param name="mnemonic">Mnemonic.</param>
+        /// <returns>Share.</returns>
         private static Share ShareFromMnemonic(Mnemonic mnemonic)
         {
             byte index = (byte)(mnemonic.Indices[mnemonic.Indices.Length - 1] & (1 << CheckSumLength(mnemonic)) - 1);
